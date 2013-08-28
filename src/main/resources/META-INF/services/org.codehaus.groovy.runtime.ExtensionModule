@@ -1,0 +1,4 @@
+moduleName=groovy-clj-ext-module
+moduleVersion=1.0
+extensionClasses=com.nagternal.groovy.clojure.ClojureExtension,com.nagternal.groovy.clojure.DataStructureExtension
+staticExtensionClasses=com.nagternal.groovy.clojure.ClojureStaticExtension

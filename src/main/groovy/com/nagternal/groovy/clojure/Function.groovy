@@ -216,7 +216,7 @@ class Function extends Closure implements IFn {
     Object applyTo(ISeq arglist) {
 
         // TODO Auto-generated method stub
-        return null
+        null
     }
 
     static Var define(String name, Closure closure) {
@@ -257,7 +257,7 @@ class Function extends Closure implements IFn {
         closure.resolveStrategy
     }
 
-    Object getThisObject(){
+    Object getThisObject() {
         closure.thisObject
     }
 

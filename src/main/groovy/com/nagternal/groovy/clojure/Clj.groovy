@@ -42,18 +42,19 @@ class Clj extends RT {
 	}
 
 	static Var getAt(String qualifiedName) {
-		int delim = qualifiedName.indexOf('/')
-		String ns = qualifiedName[0..delim - 1]
-		String name = qualifiedName.substring(delim + 1)
-		var(ns, name)
+		var(*nsname(qualifiedName))
 	}
 
 	static Var putAt(String qualifiedName, Object value) {
-		int delim = qualifiedName.indexOf('/')
-		String ns = qualifiedName[0..delim - 1]
-		String name = qualifiedName.substring(delim + 1)
-		var(ns, name, value)
+		var(*nsname(qualifiedName), value)
 	}
+
+    static nsname(String nsname) {
+        int delim = nsname.indexOf('/')
+        String ns = nsname[0..delim - 1]
+        String name = nsname[delim + 1..-1]
+        [ns, name]
+    }
 
 	static Var putAt(List<String> nsname, Object value) {
 		var(*nsname, value)
@@ -63,15 +64,15 @@ class Clj extends RT {
 		vars.each { name, value -> var(namespace, name, value) }
 	}
 
-	static def sync(Closure closure) {
+	static sync(Closure closure) {
 		LockingTransaction.runInTransaction(closure)
 	}
 
-	static def dosync(Object... expresions) {
+	static dosync(Object... expresions) {
 		sync { doall(expresions) }
 	}
 
-	static def doall(Object... expresions) {
+	static doall(Object... expresions) {
 		def result
 		expresions.each { result = it instanceof Callable ? it.call() : it }
 		result

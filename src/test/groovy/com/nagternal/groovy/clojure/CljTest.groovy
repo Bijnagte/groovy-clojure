@@ -28,4 +28,13 @@ class CljTest {
         assert b.deref() == 'value'
 
     }
+
+    @Test
+    void testDoall() {
+        def list = []
+        def result = Clj.doall( { list << 'test' }, 'done' )
+        assert result == 'done'
+        assert list.size() == 1
+        assert list[0] == 'test'
+    }
 }

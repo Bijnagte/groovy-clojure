@@ -28,7 +28,9 @@
 package com.nagternal.groovy.clojure
 
 import clojure.lang.IFn
+import clojure.lang.Keyword
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
+import org.codehaus.groovy.runtime.StringGroovyMethods
 
 /**
  * @author Dylan
@@ -36,7 +38,7 @@ import org.codehaus.groovy.runtime.DefaultGroovyMethods
  */
 class ClojureExtension {
 
-    static def call(IFn self, Object... args) {
+    static call(IFn self, Object... args) {
         self.invoke(* args)
     }
 
@@ -51,4 +53,17 @@ class ClojureExtension {
             DefaultGroovyMethods.asType(self, clazz)
         }
     }
+
+    static <T> T asType(String self, Class<T> clazz) {
+        if (clazz == Keyword) {
+            keyword(self)
+        } else {
+            StringGroovyMethods.asType(self, clazz)
+        }
+    }
+
+    static Keyword keyword(String self) {
+        Keyword.intern(self)
+    }
+
 }

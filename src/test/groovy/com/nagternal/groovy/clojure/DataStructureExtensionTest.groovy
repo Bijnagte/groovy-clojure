@@ -113,4 +113,18 @@ class DataStructureExtensionTest {
             assert updated[2] == 'c'
         }
     }
+
+    @Test
+    void testPlusVectorCollection() {
+        use(DataStructureExtension) {
+            IPersistentVector vec = ['a', 'b'].persistent()
+            IPersistentVector updated = vec + ['c', 'd']
+            assert vec.size() == 2
+            assert updated.size() == 4
+            assert updated[0] == 'a'
+            assert updated[1] == 'b'
+            assert updated[2] == 'c'
+            assert updated[3] == 'd'
+        }
+    }
 }

@@ -28,6 +28,8 @@
 package com.nagternal.groovy.clojure
 
 import clojure.lang.IFn
+import clojure.lang.IObj
+import clojure.lang.IPersistentMap
 import clojure.lang.Keyword
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.codehaus.groovy.runtime.StringGroovyMethods
@@ -64,6 +66,31 @@ class ClojureExtension {
 
     static Keyword keyword(String self) {
         Keyword.intern(self)
+    }
+
+    static Keyword keyword(String self, Object owner) {
+        Keyword.intern(owner.getClass().name.toLowerCase(),self)
+    }
+
+    static Map<Keyword, Object> keyword(Map<String,Object> self) {
+        self.collectEntries { key, value ->
+            [keyword(key), value]
+        }
+    }
+
+    static IObj withMeta(IObj self, Map<String,Object> meta) {
+        IPersistentMap keywordMeta = DataStructureExtension.persistent( meta.collectEntries { key, val ->
+            [keyword(key), val]
+        })
+        self.withMeta(keywordMeta)
+    }
+
+    static IObj xor(IObj self, Map<String,Object> meta) {
+        withMeta(self, meta)
+    }
+
+    static IObj xor(IObj self, IPersistentMap meta) {
+        self.withMeta(meta)
     }
 
 }

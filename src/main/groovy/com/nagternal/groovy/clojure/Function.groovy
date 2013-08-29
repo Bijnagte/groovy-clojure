@@ -25,16 +25,32 @@
 package com.nagternal.groovy.clojure
 
 import clojure.lang.IFn
+import clojure.lang.IObj
+import clojure.lang.IPersistentMap
 import clojure.lang.ISeq
 import clojure.lang.Var
 
-class Function extends Closure implements IFn {
+class Function extends Closure implements IFn, IObj {
 
     final Closure closure
+    final IPersistentMap meta
 
     Function(Closure closure) {
+        this(closure, null)
+    }
+
+    Function(Closure closure, IPersistentMap meta) {
         super(closure.owner, closure.thisObject)
         this.closure = closure
+        this.meta = meta
+    }
+
+    Function withMeta(IPersistentMap meta) {
+        new Function(closure, meta)
+    }
+
+    IPersistentMap meta() {
+        meta
     }
 
     Object call() {

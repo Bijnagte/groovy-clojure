@@ -64,5 +64,28 @@ class ClojureExtensionTest {
         }
     }
 
+    @Test
+    void testWithMetaMap() {
+        use(ClojureExtension) {
+            def fn = { val ->
+                "${test}!"
+            }.asFn()
+
+            def initial = fn.meta()
+            assert initial == null
+            String docString = 'this is my doc string'
+            def metaFn = fn^[doc: docString, other: 'different key']
+            def meta = metaFn.meta()
+            def doc = 'doc'.keyword()
+            assert  doc(meta) ==  docString
+            assert metaFn != fn
+            assert meta.size() == 2
+            meta.each { key, val ->
+                assert key instanceof Keyword
+                assert val instanceof String
+            }
+        }
+    }
+
 
 }

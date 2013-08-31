@@ -78,7 +78,7 @@ class ClojureExtension {
         }
     }
 
-    static IObj withMeta(IObj self, Map<String,Object> meta) {
+    static IObj withMeta(IObj self, HashMap<String,Object> meta) {
         IPersistentMap keywordMeta = DataStructureExtension.persistent( meta.collectEntries { key, val ->
             [keyword(key), val]
         })

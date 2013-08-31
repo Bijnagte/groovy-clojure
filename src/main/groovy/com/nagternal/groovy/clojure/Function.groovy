@@ -36,17 +36,17 @@ class Function extends Closure implements IFn, IObj {
     final IPersistentMap meta
 
     Function(Closure closure) {
-        this(closure, null)
+        this(null, closure)
     }
 
-    Function(Closure closure, IPersistentMap meta) {
+    Function(IPersistentMap meta, Closure closure) {
         super(closure.owner, closure.thisObject)
         this.closure = closure
         this.meta = meta
     }
 
     Function withMeta(IPersistentMap meta) {
-        new Function(closure, meta)
+        new Function(meta, closure)
     }
 
     IPersistentMap meta() {
@@ -236,9 +236,16 @@ class Function extends Closure implements IFn, IObj {
     }
 
     static Var define(String name, Closure closure) {
+        define(name, null, closure)
+    }
+
+    static Var define(String name, HashMap meta, Closure closure) {
+        define(name, DataStructureExtension.persistent(ClojureExtension.keyword(meta)), closure)
+    }
+
+    static Var define(String name, IPersistentMap meta, Closure closure) {
         Class owner = closure.delegate.getClass()
-        owner.name.toLowerCase()
-        Clj.var(owner.name.toLowerCase(), name, new Function(closure))
+        Clj.var(owner.name.toLowerCase(), name, new Function(meta, closure))
     }
 
 

@@ -27,10 +27,7 @@
  */
 package com.nagternal.groovy.clojure
 
-import clojure.lang.IFn
-import clojure.lang.IObj
-import clojure.lang.IPersistentMap
-import clojure.lang.Keyword
+import clojure.lang.*
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.codehaus.groovy.runtime.StringGroovyMethods
 
@@ -69,23 +66,27 @@ class ClojureExtension {
     }
 
     static Keyword keyword(String self, Object owner) {
-        Keyword.intern(owner.getClass().name.toLowerCase(),self)
+        keyword(owner.getClass(), self)
     }
 
-    static Map<Keyword, Object> keyword(Map<String,Object> self) {
+    static Keyword keyword(String self, Class namespace) {
+        Keyword.intern(namespace.name.toLowerCase(), self)
+    }
+
+    static Map<Keyword, Object> keyword(Map<String, Object> self) {
         self.collectEntries { key, value ->
             [keyword(key), value]
         }
     }
 
-    static IObj withMeta(IObj self, HashMap<String,Object> meta) {
-        IPersistentMap keywordMeta = DataStructureExtension.persistent( meta.collectEntries { key, val ->
+    static IObj withMeta(IObj self, HashMap<String, Object> meta) {
+        IPersistentMap keywordMeta = DataStructureExtension.persistent(meta.collectEntries { key, val ->
             [keyword(key), val]
         })
         self.withMeta(keywordMeta)
     }
 
-    static IObj xor(IObj self, Map<String,Object> meta) {
+    static IObj xor(IObj self, Map<String, Object> meta) {
         withMeta(self, meta)
     }
 
@@ -93,4 +94,19 @@ class ClojureExtension {
         self.withMeta(meta)
     }
 
+    static edn(String self) {
+        EdnReader.readString(self, PersistentHashMap.EMPTY)
+    }
+
+    static edn(String self, IPersistentMap opts) {
+        EdnReader.readString(self, opts)
+    }
+
+    static edn(Reader self) {
+         EdnReader.read(new PushbackReader(self), PersistentHashMap.EMPTY)
+    }
+
+    static edn(Reader self, IPersistentMap opts) {
+        EdnReader.read(new PushbackReader(self), opts)
+    }
 }

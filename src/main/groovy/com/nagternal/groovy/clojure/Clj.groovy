@@ -24,6 +24,8 @@
 
 package com.nagternal.groovy.clojure
 
+import clojure.lang.Namespace
+import clojure.lang.Symbol
 
 import java.util.concurrent.Callable
 
@@ -77,4 +79,12 @@ class Clj extends RT {
 		expresions.each { result = it instanceof Callable ? it.call() : it }
 		result
 	}
+
+    static Namespace namespace(String ns) {
+        Namespace.find(Symbol.intern(null, ns))
+    }
+
+    static Namespace namespace(Class clazz) {
+        namespace(clazz.name.toLowerCase())
+    }
 }

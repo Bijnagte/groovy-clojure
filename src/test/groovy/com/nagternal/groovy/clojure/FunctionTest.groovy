@@ -1,6 +1,9 @@
 package com.nagternal.groovy.clojure
 
+import clojure.lang.EdnReader
 import clojure.lang.Keyword
+import clojure.lang.PersistentHashMap
+import clojure.lang.Symbol
 import clojure.lang.Var
 import clojure.lang.Namespace
 import org.junit.Test
@@ -46,7 +49,7 @@ class FunctionTest {
     @Test
     void testDefine() {
         Var var = Function.define('hello') { 'hello' }
-        assert var.ns.name.name == this.class.name.toLowerCase()
+        assert var.ns == Clj.namespace(this.class)
         assert var.invoke() == 'hello'
     }
 
@@ -58,18 +61,20 @@ class FunctionTest {
         }
 
         def meta = var.meta()
-        assert meta.size() == 2
+        assert meta.size() == 3
         meta.each { k, v ->
             assert k instanceof Keyword
         }
-        def doc = ClojureExtension.keyword('doc')
-        def ns = ClojureExtension.keyword('ns')
-
         use(ClojureExtension) {
+            def doc = 'doc'.keyword()
+            def ns = 'ns'.keyword()
             assert 'woot!' == var('woot')
-            assert this.class.name.toLowerCase() == ns(meta).toString()
-            def ref = var.deref()
-            assert doc(ref.meta()) == docString
+            assert Clj.namespace(this.class) == ns(meta)
+            assert doc(meta) == docString
         }
+        var.fn()
+        println(var)
+        println(meta)
+        println EdnReader.readString('{"x" 1 "y" 2}', PersistentHashMap.EMPTY)
     }
 }

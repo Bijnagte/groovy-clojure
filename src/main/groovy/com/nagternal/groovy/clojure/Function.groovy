@@ -28,6 +28,7 @@ import clojure.lang.IFn
 import clojure.lang.IObj
 import clojure.lang.IPersistentMap
 import clojure.lang.ISeq
+import clojure.lang.PersistentHashMap
 import clojure.lang.Var
 
 class Function extends Closure implements IFn, IObj {
@@ -236,7 +237,7 @@ class Function extends Closure implements IFn, IObj {
     }
 
     static Var define(String name, Closure closure) {
-        define(name, null, closure)
+        define(name, PersistentHashMap.EMPTY, closure)
     }
 
     static Var define(String name, HashMap meta, Closure closure) {
@@ -245,7 +246,9 @@ class Function extends Closure implements IFn, IObj {
 
     static Var define(String name, IPersistentMap meta, Closure closure) {
         Class owner = closure.delegate.getClass()
-        Clj.var(owner.name.toLowerCase(), name, new Function(meta, closure))
+        Var var = Clj.var(owner.name.toLowerCase(), name, new Function(closure))
+        var.setMeta(meta)
+        var
     }
 
 

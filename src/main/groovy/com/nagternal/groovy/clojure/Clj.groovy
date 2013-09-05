@@ -54,7 +54,8 @@ class Clj {
 	}
 
     static nsname(String nsname) {
-        int delim = nsname.indexOf('/')
+        int delim = nsname.lastIndexOf('/')
+        if (!delim) { throw new Exception("${nsname} is not a fully qualified name") }
         String ns = nsname[0..delim - 1]
         String name = nsname[delim + 1..-1]
         [ns, name]

@@ -6,7 +6,7 @@ sourceCompatibility = 1.5
 version = '0.1'
 
 
-defaultTasks = build
+defaultTasks = ['build']
 
 jar {
     manifest {

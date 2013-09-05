@@ -4,6 +4,10 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.5
 version = '0.1'
+
+
+defaultTasks = build
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Groovy Clojure Extension', 'Implementation-Version': version

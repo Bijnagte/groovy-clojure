@@ -24,14 +24,6 @@
 
 package com.nagternal.groovy.clojure
 
-import clojure.lang.RT
-import clojure.lang.Var
-
 class ClojureStaticExtension {
-	static Var getAt(RT selfType, List name) {
-		assert name.size() == 2
-		String ns = name.first()
-		String var = name.last()
-		RT.var(ns, var)
-	}
+
 }

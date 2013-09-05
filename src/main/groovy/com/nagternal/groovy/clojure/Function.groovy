@@ -24,12 +24,7 @@
 
 package com.nagternal.groovy.clojure
 
-import clojure.lang.IFn
-import clojure.lang.IObj
-import clojure.lang.IPersistentMap
-import clojure.lang.ISeq
-import clojure.lang.PersistentHashMap
-import clojure.lang.Var
+import clojure.lang.*
 
 class Function extends Closure implements IFn, IObj {
 
@@ -231,27 +226,18 @@ class Function extends Closure implements IFn, IObj {
     }
 
     Object applyTo(ISeq arglist) {
-
-        // TODO Auto-generated method stub
-        null
+        int count = arglist.count()
+        if (count) {
+            def args = []
+            count.times {
+                args << arglist.first()
+                arglist = arglist.more()
+            }
+            closure.call(* args)
+        } else {
+            closure.call(null)
+        }
     }
-
-    static Var define(String name, Closure closure) {
-        define(name, PersistentHashMap.EMPTY, closure)
-    }
-
-    static Var define(String name, HashMap meta, Closure closure) {
-        define(name, DataStructureExtension.persistent(ClojureExtension.keyword(meta)), closure)
-    }
-
-    static Var define(String name, IPersistentMap meta, Closure closure) {
-        Class owner = closure.delegate.getClass()
-        Var var = Clj.var(owner.name.toLowerCase(), name, new Function(closure))
-        var.setMeta(meta)
-        var
-    }
-
-
     /**
      * Sets the strategy which the closure uses to resolve property references and methods.
      * The default is Closure.OWNER_FIRST
@@ -288,7 +274,7 @@ class Function extends Closure implements IFn, IObj {
     }
 
     Object getProperty(final String property) {
-           closure.getProperty(property)
+        closure.getProperty(property)
     }
 
     void setProperty(String property, Object newValue) {
@@ -339,6 +325,7 @@ class Function extends Closure implements IFn, IObj {
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
+
     void run() {
         call()
     }

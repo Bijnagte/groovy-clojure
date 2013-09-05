@@ -3,6 +3,7 @@ package com.nagternal.groovy.clojure
 import clojure.lang.EdnReader
 import clojure.lang.Keyword
 import clojure.lang.PersistentHashMap
+import clojure.lang.PersistentVector
 import clojure.lang.Symbol
 import clojure.lang.Var
 import clojure.lang.Namespace
@@ -47,34 +48,9 @@ class FunctionTest {
     }
 
     @Test
-    void testDefine() {
-        Var var = Function.define('hello') { 'hello' }
-        assert var.ns == Clj.namespace(this.class)
-        assert var.invoke() == 'hello'
-    }
-
-    @Test
-    void testDefineHashMapMeta() {
-        def docString = 'doc string'
-        Var var = Function.define('!', [doc: docString]) { arg ->
-            "${arg}!"
-        }
-
-        def meta = var.meta()
-        assert meta.size() == 3
-        meta.each { k, v ->
-            assert k instanceof Keyword
-        }
-        use(ClojureExtension) {
-            def doc = 'doc'.keyword()
-            def ns = 'ns'.keyword()
-            assert 'woot!' == var('woot')
-            assert Clj.namespace(this.class) == ns(meta)
-            assert doc(meta) == docString
-        }
-        var.fn()
-        println(var)
-        println(meta)
-        println EdnReader.readString('{"x" 1 "y" 2}', PersistentHashMap.EMPTY)
+    void testApply() {
+        def fn = new Function({first, second -> first + second})
+        PersistentVector args = DataStructureExtension.persistent([4,5])
+        assert 9 == fn.applyTo(args.seq())
     }
 }

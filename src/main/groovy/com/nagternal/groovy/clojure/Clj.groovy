@@ -24,7 +24,9 @@
 
 package com.nagternal.groovy.clojure
 
+import clojure.lang.IPersistentMap
 import clojure.lang.Namespace
+import clojure.lang.PersistentHashMap
 import clojure.lang.Symbol
 
 import java.util.concurrent.Callable
@@ -33,22 +35,22 @@ import clojure.lang.LockingTransaction
 import clojure.lang.RT
 import clojure.lang.Var
 
-class Clj extends RT {
+class Clj {
 
 	static Var getAt(String ns, String name) {
-		var(ns, name)
+		RT.var(ns, name)
 	}
 
 	static Var getAt(List<String> nsname) {
-		var(*nsname)
+        RT.var(*nsname)
 	}
 
 	static Var getAt(String qualifiedName) {
-		var(*nsname(qualifiedName))
+        RT.var(*nsname(qualifiedName))
 	}
 
 	static Var putAt(String qualifiedName, Object value) {
-		var(*nsname(qualifiedName), value)
+        RT.var(*nsname(qualifiedName), value)
 	}
 
     static nsname(String nsname) {
@@ -59,12 +61,17 @@ class Clj extends RT {
     }
 
 	static Var putAt(List<String> nsname, Object value) {
-		var(*nsname, value)
+        RT.var(*nsname, value)
 	}
 
 	static void define(Map vars, String namespace) {
-		vars.each { name, value -> var(namespace, name, value) }
+		vars.each { name, value -> RT.var(namespace, name, value) }
 	}
+
+    static void define(Map vars, Class clazz) {
+        def namespace = clazz.name.toLowerCase()
+        vars.each { name, value -> RT.var(namespace, name, value) }
+    }
 
 	static sync(Closure closure) {
 		LockingTransaction.runInTransaction(closure)
@@ -86,5 +93,20 @@ class Clj extends RT {
 
     static Namespace namespace(Class clazz) {
         namespace(clazz.name.toLowerCase())
+    }
+
+    static Var define(String name, Closure closure) {
+        define(name, PersistentHashMap.EMPTY, closure)
+    }
+
+    static Var define(String name, HashMap meta, Closure closure) {
+        define(name, DataStructureExtension.persistent(ClojureExtension.keyword(meta)), closure)
+    }
+
+    static Var define(String name, IPersistentMap meta, Closure closure) {
+        Class owner = closure.delegate.getClass()
+        Var var = RT.var(owner.name.toLowerCase(), name, new Function(closure))
+        var.setMeta(meta)
+        var
     }
 }

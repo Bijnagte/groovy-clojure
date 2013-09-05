@@ -1,5 +1,8 @@
 package com.nagternal.groovy.clojure
 
+import clojure.lang.EdnReader
+import clojure.lang.Keyword
+import clojure.lang.PersistentHashMap
 import clojure.lang.Var
 import org.junit.Test
 
@@ -23,10 +26,38 @@ class CljTest {
     @Test
     void testDefine() {
         Clj.define('user', a: 0, b: 'value')
-        def a = Clj['user/a']
-        def b = Clj['user/b']
+        Var a = Clj['user/a']
+        Var b = Clj['user/b']
         assert b.deref() == 'value'
+        assert a.deref() == 0
+    }
 
+    @Test
+    void testDefineFunction() {
+        Var var = Clj.define('hello') { 'hello' }
+        assert var.ns == Clj.namespace(this.class)
+        assert var.invoke() == 'hello'
+    }
+
+    @Test
+    void testDefineFunctionHashMapMeta() {
+        def docString = 'doc string'
+        Var var = Clj.define('!', [doc: docString]) { arg ->
+            "${arg}!"
+        }
+
+        def meta = var.meta()
+        assert meta.size() == 3
+        meta.each { k, v ->
+            assert k instanceof Keyword
+        }
+        use(ClojureExtension) {
+            def doc = 'doc'.keyword()
+            def ns = 'ns'.keyword()
+            assert 'woot!' == var('woot')
+            assert Clj.namespace(this.class) == ns(meta)
+            assert doc(meta) == docString
+        }
     }
 
     @Test

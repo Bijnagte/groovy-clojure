@@ -1,8 +1,6 @@
 package com.nagternal.groovy.clojure
 
-import clojure.lang.EdnReader
 import clojure.lang.Keyword
-import clojure.lang.PersistentHashMap
 import clojure.lang.Var
 import org.junit.Test
 
@@ -63,7 +61,7 @@ class CljTest {
     @Test
     void testDoall() {
         def list = []
-        def result = Clj.doall( { list << 'test' }, 'done' )
+        def result = Clj.doall( { list << 'test' }, 'done')
         assert result == 'done'
         assert list.size() == 1
         assert list[0] == 'test'

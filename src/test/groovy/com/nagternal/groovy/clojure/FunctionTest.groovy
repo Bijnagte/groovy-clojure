@@ -1,20 +1,12 @@
 package com.nagternal.groovy.clojure
 
-import clojure.lang.EdnReader
-import clojure.lang.Keyword
-import clojure.lang.PersistentHashMap
 import clojure.lang.PersistentVector
-import clojure.lang.Symbol
-import clojure.lang.Var
-import clojure.lang.Namespace
 import org.junit.Test
 
 /**
- * Created with IntelliJ IDEA.
  * User: Dylan
  * Date: 8/25/13
  * Time: 7:47 PM
- * To change this template use File | Settings | File Templates.
  */
 class FunctionTest {
 
@@ -31,7 +23,7 @@ class FunctionTest {
 
     @Test
     void testDelegate() {
-        def fn = new Function({ String name -> 'hello' })
+        def fn = new Function( { String name -> 'hello' } )
         assert fn.parameterTypes.size() == 1
         assert fn.parameterTypes[0] == String
         assert fn instanceof Closure
@@ -39,9 +31,7 @@ class FunctionTest {
 
     @Test
     void testCallArg() {
-        def fn = new Function({ String name ->
-            "hello $name"
-        })
+        def fn = new Function( { String name -> "hello $name" } )
         assert fn.invoke('joe') == 'hello joe'
         assert fn.call('joe') == 'hello joe'
         assert fn('joe') == 'hello joe'
@@ -49,8 +39,8 @@ class FunctionTest {
 
     @Test
     void testApply() {
-        def fn = new Function({first, second -> first + second})
-        PersistentVector args = DataStructureExtension.persistent([4,5])
+        def fn = new Function( { first, second -> first + second } )
+        PersistentVector args = DataStructureExtension.persistent([4, 5])
         assert 9 == fn.applyTo(args.seq())
     }
 }

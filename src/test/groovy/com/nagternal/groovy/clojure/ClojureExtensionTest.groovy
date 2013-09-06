@@ -27,10 +27,10 @@ class ClojureExtensionTest {
     void addFn() {
         use(ClojureExtension) {
             def plus = RT.var('clojure.core', '+')
-            Namespace user = Namespace.findOrCreate(Symbol.intern('user'));
-            def fn = new Function({ println plus(3, 6) })
+            Namespace user = Namespace.findOrCreate(Symbol.intern('user'))
+            def fn = new Function( { plus(3, 6) } )
             Var hi = Var.intern(user, Symbol.intern('hello'), fn)
-            def hello = RT.var('user', "hello")
+            def hello = RT.var('user', 'hello')
             assert hello == hi
             hello()
         }
@@ -74,10 +74,10 @@ class ClojureExtensionTest {
             def initial = fn.meta()
             assert initial == null
             String docString = 'this is my doc string'
-            def metaFn = fn^[doc: docString, other: 'different key']
+            def metaFn = fn ^ [doc: docString, other: 'different key']
             def meta = metaFn.meta()
             def doc = 'doc'.keyword()
-            assert  doc(meta) ==  docString
+            assert doc(meta) == docString
             assert metaFn != fn
             assert meta.size() == 2
             meta.each { key, val ->
@@ -86,6 +86,4 @@ class ClojureExtensionTest {
             }
         }
     }
-
-
 }

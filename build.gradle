@@ -1,6 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
-//apply plugin: 'codenarc'
+apply plugin: 'codenarc'
 
 sourceCompatibility = 1.5
 version = '0.1'
@@ -24,9 +24,10 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
-//codenarc {
-//    configFile = file("${project.projectDir}/config/codenarc/codenarc.groovy")
-//}
+codenarc {
+    configFile = file("${project.projectDir}/config/codenarc/codenarc.groovy")
+
+}
 
 uploadArchives {
     repositories {

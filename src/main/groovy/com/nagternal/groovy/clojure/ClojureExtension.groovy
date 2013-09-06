@@ -78,7 +78,7 @@ class ClojureExtension {
             [keyword(key), value]
         }
     }
-
+    @SuppressWarnings('ImplementationAsType')//PersistentHashMap implements Map also
     static IObj withMeta(IObj self, HashMap<String, Object> meta) {
         IPersistentMap keywordMeta = DataStructureExtension.persistent(meta.collectEntries { key, val ->
             [keyword(key), val]

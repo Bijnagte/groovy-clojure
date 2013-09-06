@@ -26,10 +26,11 @@ package com.nagternal.groovy.clojure
 
 import clojure.lang.*
 
+@SuppressWarnings('MethodCount')
 class Function extends Closure implements IFn, IObj {
 
-    final Closure closure
-    final IPersistentMap meta
+    private final Closure closure
+    final IPersistentMap metadata
 
     Function(Closure closure) {
         this(null, closure)
@@ -38,7 +39,7 @@ class Function extends Closure implements IFn, IObj {
     Function(IPersistentMap meta, Closure closure) {
         super(closure.owner, closure.thisObject)
         this.closure = closure
-        this.meta = meta
+        this.metadata = meta
     }
 
     Function withMeta(IPersistentMap meta) {
@@ -46,7 +47,7 @@ class Function extends Closure implements IFn, IObj {
     }
 
     IPersistentMap meta() {
-        meta
+        metadata
     }
 
     Object call() {
@@ -228,10 +229,11 @@ class Function extends Closure implements IFn, IObj {
     Object applyTo(ISeq arglist) {
         int count = arglist.count()
         if (count) {
+            def seq = arglist
             def args = []
             count.times {
-                args << arglist.first()
-                arglist = arglist.more()
+                args << seq.first()
+                seq = seq.more()
             }
             closure.call(* args)
         } else {
@@ -327,8 +329,6 @@ class Function extends Closure implements IFn, IObj {
      */
 
     void run() {
-        call()
+        closure.call()
     }
-
-
 }

@@ -28,11 +28,9 @@ import clojure.lang.*
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
 /**
- * Created with IntelliJ IDEA.
  * User: Dylan
  * Date: 8/23/13
  * Time: 8:50 PM
- * To change this template use File | Settings | File Templates.
  */
 class DataStructureExtension {
     static <T> T asType(Map map, Class<T> clazz) {
@@ -57,7 +55,7 @@ class DataStructureExtension {
         result
     }
 
-    static PersistentHashMap plus(PersistentHashMap self, Map map) {
+    static IPersistentMap plus(PersistentHashMap self, Map map) {
         def result
         map.each { k, v ->
             result = self.assoc(k, v)
@@ -89,11 +87,11 @@ class DataStructureExtension {
         self.cons(value)
     }
 
-    static PersistentVector plus(PersistentVector self, Object value) {
+    static IPersistentVector plus(PersistentVector self, Object value) {
         self.cons(value)
     }
 
-    static PersistentVector plus(PersistentVector self, Collection values) {
+    static IPersistentVector plus(PersistentVector self, Collection values) {
         def result = self
         values.each { value ->
             result = result.cons(value)
@@ -102,6 +100,18 @@ class DataStructureExtension {
     }
 
     static IPersistentList plus(IPersistentList self, Object value) {
+        self.cons(value)
+    }
+
+    static IPersistentSet persistent(Set self) {
+        PersistentHashSet.create(* self)
+    }
+
+    static IPersistentSet plus(IPersistentSet self, Object value) {
+        self.cons(value)
+    }
+
+    static IPersistentSet plus(PersistentHashSet self, Object value) {
         self.cons(value)
     }
 }

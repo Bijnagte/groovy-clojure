@@ -1,17 +1,31 @@
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'codenarc'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.5
+group = 'com.nagternal'
 version = '0.1'
-
 
 defaultTasks = ['build']
 
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Groovy Clojure Extension', 'Implementation-Version': version
-    }
+def isDevBuild
+def isCiBuild
+def isReleaseBuild
+
+def sonatypeRepositoryUrl
+
+//set build variables based on build type (release, continuous integration, development)
+if(hasProperty("release")) {
+    isReleaseBuild = true
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+} else if (hasProperty("ci")) {
+    isCiBuild = true
+    version += "-SNAPSHOT"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+    isDevBuild = true
 }
 
 repositories {
@@ -24,18 +38,80 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Groovy Clojure Extension', 'Implementation-Version': version
+    }
+}
+
+task groovydocJar(type: Jar) {
+    classifier = 'javadoc'
+    from groovydoc
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives groovydocJar
+    archives sourcesJar
+}
+
 codenarc {
     configFile = file("${project.projectDir}/config/codenarc/codenarc.groovy")
 
 }
 
+signing {
+    sign configurations.archives
+}
+
 uploadArchives {
     repositories {
-        flatDir {
-            dirs 'repos'
+            mavenDeployer {
+                if(isReleaseBuild) {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                }
+                if (isDevBuild) {
+                    repository(url: "file://localhost/tmp/myRepo/")
+                }
+                else {
+                    repository(url: sonatypeRepositoryUrl) {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    }
+                }
+
+                pom.project {
+                    name 'groovy=clojure'
+                    packaging 'jar'
+                    description 'groovy-clojure is a library for interop between Groovy and Clojure'
+                    url 'https://github.com/Bijnagte/groovy-clojure'
+
+                    scm {
+                        url 'scm:git@github.com:Bijnagte/groovy-clojure.git'
+                        connection 'scm:git@github.com:Bijnagte/groovy-clojure.git'
+                        developerConnection 'scm:git@github.com:Bijnagte/groovy-clojure.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The MIT License (MIT)'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'Bijnagte'
+                            name 'Dylan Bijnagte'
+                        }
+                    }
+                }
+            }
         }
     }
-}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.7'

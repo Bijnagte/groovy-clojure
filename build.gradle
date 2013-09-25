@@ -47,7 +47,9 @@ artifacts {
 }
 
 signing {
-    sign configurations.archives
+    if (hasProperty('signing.password')) {
+        sign configurations.archives
+    }
 }
 
 def isDevBuild
@@ -57,7 +59,7 @@ def isReleaseBuild
 def sonatypeRepositoryUrl
 
 //set build variables based on build type (release, continuous integration, development)
-if(hasProperty("release")) {
+if (hasProperty('release')) {
     isReleaseBuild = true
     sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else if (hasProperty("ci")) {

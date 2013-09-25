@@ -5,28 +5,10 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceCompatibility = 1.5
-group = 'com.nagternal'
+group = 'com.nagternal.groovy'
 version = '0.1'
 
 defaultTasks = ['build']
-
-def isDevBuild
-def isCiBuild
-def isReleaseBuild
-
-def sonatypeRepositoryUrl
-
-//set build variables based on build type (release, continuous integration, development)
-if(hasProperty("release")) {
-    isReleaseBuild = true
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-} else if (hasProperty("ci")) {
-    isCiBuild = true
-    version += "-SNAPSHOT"
-    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-} else {
-    isDevBuild = true
-}
 
 repositories {
     mavenCentral()
@@ -36,6 +18,10 @@ dependencies {
     compile('org.codehaus.groovy:groovy:2.1.5',
             'org.clojure:clojure:1.5.1')
     testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+codenarc {
+    configFile = file("${project.projectDir}/config/codenarc/codenarc.groovy")
 }
 
 jar {
@@ -60,13 +46,26 @@ artifacts {
     archives sourcesJar
 }
 
-codenarc {
-    configFile = file("${project.projectDir}/config/codenarc/codenarc.groovy")
-
-}
-
 signing {
     sign configurations.archives
+}
+
+def isDevBuild
+def isCiBuild
+def isReleaseBuild
+
+def sonatypeRepositoryUrl
+
+//set build variables based on build type (release, continuous integration, development)
+if(hasProperty("release")) {
+    isReleaseBuild = true
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+} else if (hasProperty("ci")) {
+    isCiBuild = true
+    version += "-SNAPSHOT"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+    isDevBuild = true
 }
 
 uploadArchives {
@@ -114,5 +113,5 @@ uploadArchives {
     }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.7'
+    gradleVersion = '1.8'
 }

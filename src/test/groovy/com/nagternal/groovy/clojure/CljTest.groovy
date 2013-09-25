@@ -1,8 +1,12 @@
 package com.nagternal.groovy.clojure
 
-import clojure.lang.Keyword
-import clojure.lang.Var
 import org.junit.Test
+
+import clojure.lang.IPersistentMap
+import clojure.lang.Keyword
+import clojure.lang.RT
+import clojure.lang.Symbol
+import clojure.lang.Var
 
 class CljTest {
 
@@ -66,4 +70,17 @@ class CljTest {
         assert list.size() == 1
         assert list[0] == 'test'
     }
+	
+	
+	@Test
+	void testRequire() {
+		//RT.load('test/test', true)
+		def require = RT.var('clojure.core', 'require')
+		require.invoke(Symbol.intern('test.test'))
+		Var foo = RT.var('test.test', 'foo')
+        assert foo.isBound()
+		def result = foo.invoke('value')
+		assert result instanceof IPersistentMap
+        assert Keyword.intern('arg').invoke(result) == 'value'
+	}
 }

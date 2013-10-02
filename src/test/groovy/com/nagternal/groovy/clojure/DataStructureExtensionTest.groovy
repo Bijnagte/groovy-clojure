@@ -28,18 +28,15 @@ import clojure.lang.*
 import org.junit.Test
 
 /**
- * Created with IntelliJ IDEA.
  * User: Dylan
  * Date: 8/23/13
- * Time: 8:54 PM
- * To change this template use File | Settings | File Templates.
  */
 class DataStructureExtensionTest {
     @Test
     void testAsTypeMap() {
         use(DataStructureExtension) {
-            def pMap = [test: 'val'] as IPersistentMap
-            assert pMap instanceof PersistentHashMap
+            assert ([test: 'val'] as IPersistentMap) instanceof IPersistentMap
+            assert ([test: 'val'] as PersistentHashMap) instanceof PersistentHashMap
         }
     }
 
@@ -55,8 +52,11 @@ class DataStructureExtensionTest {
     void testPlusMap() {
         use(DataStructureExtension) {
             IPersistentMap pMap = [test: 'val'].persistent()
-            pMap += [second: 'val2']
-            assert pMap.size() == 2
+            IPersistentMap updated = pMap + [second: 'val2']
+            assert pMap.size() == 1
+            assert updated.size() == 2
+            assert updated != pMap
+            assert pMap['test'].is(updated['test'])
         }
     }
 

@@ -15,6 +15,6 @@ import java.lang.annotation.Target
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.FIELD])
 @GroovyASTTransformationClass(['com.nagternal.groovy.clojure.transform.RequireASTTransformation'])
-public @interface Require {
+@interface Require {
     String value()
 }

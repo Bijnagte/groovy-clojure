@@ -18,7 +18,7 @@ and that makes it less risky for them to experiment with true functional program
 Why Clojure?
 -------------
 Clojure's functional programming capabilities are highly desirable.  The original interest in developing this library was to
-be able to utilized Clojure's truly immutable, persistent data structures in our applications.  While other libraries such as Guava do offer immutable 
+be able to utilize Clojure's truly immutable, persistent data structures in our applications.  While other libraries such as Guava do offer immutable 
 collections, Clojure stands out in terms of memory optimization in the sense that they are truly persistent.
 
 In addition to having the best functional collections available on the JVM, Clojure offers excellent concurrent programming
